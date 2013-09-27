@@ -1,0 +1,26 @@
+<!--
+ Copyright (c) 2011 Telecats B.V. All rights reserved. Contributed to SIPfoundry and eZuce, Inc. under a Contributor Agreement.
+ This library or application is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License (AGPL) as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ This library or application is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License (AGPL) for more details. 
+ -->
+ 
+ <!-- 
+ - UI placed on menus or potentially on any page in the system that has a hook declared with
+ -    <span jwcid="@common/Plugin" blockId="SomeBlockId"/>
+ - where "SomeBlockId" is some unique id to the application and described in more detail below..
+ -
+ - All of these examples hooks get used in the AdminNavigation.html but any page can have 
+ - hooks including other plugin pages.
+ -
+ - You need to follow this very specific convention of your hook will not be used
+ -    jwcid="[Hook ID][Block ID]@Block"
+ - Where
+ -  Hook ID - You define in you sipxplugins.beans.xml file
+ -  Block ID - You find on the html page you wish to insert your html (in this case links) into.
+ -  @Block - is the type of tapestry component that is used for chunk of html to be loaded conditionally
+ -->
+ 
+<span jwcid="HotdeskingMenuFeaturesBottom@Block">
+  <li><a jwcid="@PageLink" page="plugin/HotdeskingPage"><span key="menu.plugin.bottomFeaturesMenu">Hotdesking</span></a></li>
+</span>

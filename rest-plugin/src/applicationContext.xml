@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<!-- Load the properties from some files -->
+	<bean id="hotdeskingProperties"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:${conf.dir}/hotdesking.properties</value>
+				<value>file:${conf.dir}/domain-config</value>
+			</list>
+		</property>
+		<property name="searchSystemEnvironment" value="true" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<bean id="hotdeskingTriggerSettings"
+		class="org.sipfoundry.callcenter.hotdesking.HotdeskingTriggerSettings">
+		<property name="adminAgent" value="${hotdeskingTrigger.admin}" />
+		<property name="sipxchangeDomainName" value="${hotdesking.sipxchangeDomainName}" />
+		<property name="logoffUser" value="${hotdesking.logoffUser}" />
+		<property name="tempPath" value="${tmp.dir}" />
+	</bean>
+	
+	<bean id="hotdeskingTriggerRestlet" class="org.sipfoundry.callcenter.hotdesking.HotdeskingTriggerRestlet" >
+		
+	</bean>
+
+	<bean id="officeService" class="org.sipfoundry.callcenter.hotdesking.OfficeServiceImpl">
+		<property name="sipXdao" ref="sipXdao" />
+		<property name="hotdeskingTaskWriter" ref="hotdeskingTaskWriter" />
+	</bean>
+
+	<bean id="callcenterService"
+		class="org.sipfoundry.callcenter.hotdesking.CallcenterServiceImpl">
+		<property name="sipXdao" ref="sipXdao" />
+		<property name="callcenterServicePort" value="#{serviceLocator.callCenterServicePort}" />
+	</bean>
+	
+	<bean id="serviceLocator" class="nl.telecats.sipxecs.callcenter.callCenterService.CallCenterService_ServiceLocator">
+		<!-- <property name="CallCenterServicePortEndpointAddress" value="${hotdesking.callcenterEndpoint}" /> -->
+		<property name="CallCenterServicePortEndpointAddress" value="${hotdeskingTrigger.callcenterEndpoint}" />
+	</bean>
+
+	<bean id="hotdeskingTaskWriter"
+		class="org.sipfoundry.callcenter.hotdesking.HotdeskingTaskWriter">
+		<property name="hotdeskingTriggerSettings" ref="hotdeskingTriggerSettings" />
+	</bean>
+
+	<bean id="sipXdao" class="org.sipfoundry.callcenter.hotdesking.SipXDaoImpl">
+		<property name="registrar" ref="registrar" />
+		<property name="imdb" ref="imdb" />
+	</bean>
+
+	<!-- Mongo DB registrations -->
+
+	<bean id="mongoDbFactory" class="org.sipfoundry.commons.mongo.MongoSpringFactory">
+		<property name="configFile" value="${conf.dir}/mongo-client.ini" />
+	</bean>
+
+	<!-- provide the registrar db with the current phone registrations -->
+	<bean id="registrar" class="org.sipfoundry.commons.mongo.MongoSpringTemplate">
+		<constructor-arg ref="mongoDbFactory" />
+		<property name="dbname" value="node" />
+	</bean>
+
+	<!-- provide the imdb db with the user configuration -->
+	<bean id="imdb" class="org.sipfoundry.commons.mongo.MongoSpringTemplate">
+		<constructor-arg ref="mongoDbFactory" />
+		<property name="dbname" value="imdb" />
+	</bean>
+
+	<!-- <bean id="validUsers" class="org.sipfoundry.commons.userdb.ValidUsersSpring"> 
+		<property name="imdbTemplate" ref="imdb" /> </bean> -->
+
+	<!-- End of Mongo DB registrations -->
+
+</beans>

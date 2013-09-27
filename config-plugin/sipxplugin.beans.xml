@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2011 Telecats B.V. All rights reserved. Contributed to SIPfoundry and eZuce, Inc. under a Contributor Agreement.
+ This library or application is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License (AGPL) as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ This library or application is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License (AGPL) for more details.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+
+<!-- sipXhotdesking 4.6 configuration -->
+
+  <bean id="menuHook" class="org.sipfoundry.sipxconfig.site.SimplePluginHook">
+    <property name="hookId" value="HotdeskingMenu"/>
+    <property name="featureId" value="hotdesking"/>
+  </bean>
+  
+  <bean id="sipXHotdesking" class="org.springframework.aop.framework.ProxyFactoryBean" parent="abstractDao">
+    <property name="target" ref="sipXHotdeskingImpl"/>
+    <property name="proxyInterfaces" value="org.sipfoundry.sipxconfig.sipxhotdesking.SipXHotdesking"/>
+  </bean>
+  
+  <bean id="sipXHotdeskingImpl" class="org.sipfoundry.sipxconfig.sipxhotdesking.SipXHotdeskingImpl">
+    <property name="settingsDao">
+      <bean parent="beanWithSettingsDao">
+        <property name="target"> 
+          <bean parent="beanWithSettingsDaoImpl">
+            <constructor-arg value="org.sipfoundry.sipxconfig.sipxhotdesking.SipXHotdeskingSettings"/>
+          </bean>
+        </property>
+      </bean>
+    </property>
+    <property name="featureManager" ref="featureManager" />
+    <property name="configManager" ref="configManager" />
+    <property name="domainManager" ref="domainManager" />
+    <property name="coreContext" ref="coreContext" />
+    <property name="permissionManager" ref="permissionManager" />
+    <property name="addressManager" ref="addressManager" />
+    <property name="localizationContext" ref="localizationContextImpl" />
+    <property name="sipxReplicationContext" ref="sipxReplicationContext" />
+    <property name="profileManager" ref="eagerPhoneProfileManager" />
+    <property name="phoneContext" ref="phoneContext" />
+    <property name="restartManager" ref="phoneRestartManager" />
+    <property name="hotProvisioningManager" ref="hotProvisioningManager"/>
+    <property name="registrationContext" ref="registrationContext"/>
+  </bean>
+  
+  <bean id="sipXHotdeskingSettings" class="org.sipfoundry.sipxconfig.sipxhotdesking.SipXHotdeskingSettings" parent="settingsBean">
+    <property name="modelFilesContext" ref="modelFilesContext"/>
+  </bean>
+
+  <bean id="sipXHotdeskingConfig" class="org.sipfoundry.sipxconfig.sipxhotdesking.SipXHotdeskingConfig">
+    <property name="sipXHotdesking" ref="sipXHotdesking" />
+    <property name="permissionManager" ref="permissionManager" />
+  </bean>
+  
+  <bean id="phoneRestartManager" class="org.sipfoundry.sipxconfig.device.ScheduledRestartManagerImpl">
+    <property name="deviceSource" ref="phoneSource">
+      <!-- <ref local="phoneSource" /> -->
+    </property>
+    <property name="jobContext" ref="jobContext" />
+    <property name="sleepInterval" value="5000" />
+    <property name="executorService" ref="restartExecutorService" />
+  </bean>
+  
+  <bean id="hotProvisioningManager" class="org.sipfoundry.provisioning.hot.ScheduledHotProvisioningManagerImpl">
+	<property name="deviceSource" ref="phoneSource" />
+	<property name="jobContext" ref="jobContext"/>
+	<property name="sleepInterval" value="5000"/>
+	<property name="executorService" ref="restartExecutorService"/>
+  </bean>
+
+ 
+  
+
+  
+   <!-- <bean id="hotdeskingFreeswitchExtensionProviderImpl"
+		class="org.sipfoundry.provisioning.taskfile.HotdeskingFreeswitchExtensionProviderImpl">
+		<property name="sipXHotdesking" ref="sipXHotdesking" />
+		<property name="featureManager" ref="featureManager" />
+	</bean> -->
+
+ <!-- 	<bean id="hotdeskingFreeswitchExtensionProvider" class="org.springframework.aop.framework.ProxyFactoryBean"
+		parent="abstractDao">
+		<property name="proxyInterfaces"
+			value="org.sipfoundry.provisioning.taskfile.HotdeskingFreeswitchExtensionProvider" />
+		<property name="target">
+			<ref local="hotdeskingFreeswitchExtensionProviderImpl" />
+		</property>
+	</bean> -->
+	
+	
+	<bean id="hotdeskingFreeswitchExtensionProvider" class="org.springframework.aop.framework.ProxyFactoryBean"
+		parent="abstractDao">
+		<property name="proxyInterfaces"
+			value="org.sipfoundry.provisioning.taskfile.HotdeskingFreeswitchExtensionProvider" />
+		<property name="target">
+			<ref local="sipXHotdeskingImpl" />
+		</property>
+	</bean>
+	
+	<!-- Hotdesking task file scanner -->
+	<bean id="hotdeskingTaskFileScannerTask" class="org.sipfoundry.provisioning.taskfile.HotdeskingCheckTaskTimer">
+		<property name="tmpDir" value="${sysdir.tmp}/hotdesking" />
+	</bean>
+	
+	<bean id="hotdeskingTaskFileScannerSchedulerTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
+		<property name="targetObject" ref="hotdeskingTaskFileScannerTask" />
+		<property name="targetMethod" value="scanForHotdeskingTaskFile" />
+	</bean>
+	
+	<bean id="hotdeskingTaskFileScannerTimerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="timerTask" ref="hotdeskingTaskFileScannerSchedulerTask" />
+		<property name="delay" value="1000" />
+		<property name="period" value="1000" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
+	<property name="scheduledTimerTasks">
+		<list>
+			<ref local="hotdeskingTaskFileScannerTimerTask" />
+		</list>
+	</property>
+</bean>
+  
+
+</beans>

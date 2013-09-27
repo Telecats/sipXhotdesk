@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<rest-service xmlns="http://www.sipfoundry.org/sipX/schema/xml/sipxrest-service-00-00">
+        <plugin-class>org.sipfoundry.callcenter.hotdesking.HotdeskingTriggerPlugin</plugin-class>
+        <security-level>LOCAL-AND-REMOTE</security-level>
+	<remote-authentication-method>HTTP-DIGEST</remote-authentication-method>
+	<!--<remote-authentication-method>HTTP-BASIC</remote-authentication-method>-->
+        <uri-prefix>/hotdeskingTrigger</uri-prefix>
+        <!--<sip-listener-class>org.sipfoundry.callcontroller.SipListenerImpl</sip-listener-class>-->
+        <!--<sip-convergence-name>callcontroller</sip-convergence-name>-->
+        <service-description>
+        <![CDATA[ This is the hotdesking trigger (REST) for sipX. Please call this trigger by https://{url}:{port}/hotdeskingTrigger/{service}/{method}?user_id=xx&phone_id=yy ]]>
+        </service-description>
+</rest-service>

@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="CallCenterService" targetNamespace="http://www.telecats.nl/nl.telecats.sipxecs.callcenter.callCenterService" xmlns:ns1="http://cxf.apache.org/bindings/xformat" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.telecats.nl/nl.telecats.sipxecs.callcenter.callCenterService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+<xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.telecats.nl/nl.telecats.sipxecs.callcenter.callCenterService" xmlns:tns="http://www.telecats.nl/nl.telecats.sipxecs.callcenter.callCenterService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:complexType name="callCenterServiceException">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="description" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="errorCode" type="xsd:int" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="unpause" type="tns:unpause" />
+    <xsd:complexType name="unpause">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="agentId" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="unpauseResponse" type="tns:unpauseResponse" />
+    <xsd:complexType name="unpauseResponse">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="login" type="tns:login" />
+    <xsd:complexType name="login">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="agentId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="phonenumber" nillable="true" type="xsd:string" />
+            <xsd:element name="pauseCode" type="xsd:int" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="loginResponse" type="tns:loginResponse" />
+    <xsd:complexType name="loginResponse">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="logoff" type="tns:logoff" />
+    <xsd:complexType name="logoff">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="agentId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="phonenumber" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="logoffResponse" type="tns:logoffResponse" />
+    <xsd:complexType name="logoffResponse">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="agentDialExtended" type="tns:agentDialExtended" />
+    <xsd:complexType name="agentDialExtended">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="agentId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="destNumber" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="user" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="password" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="outboundQueue" nillable="true" type="xsd:int" />
+            <xsd:element minOccurs="0" name="pauseAgent" nillable="true" type="xsd:boolean" />
+            <xsd:element minOccurs="0" name="pauseReason" nillable="true" type="xsd:int" />
+            <xsd:element minOccurs="0" name="dialBusyAgent" nillable="true" type="xsd:boolean" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="agentDialExtendedResponse" type="tns:agentDialExtendedResponse" />
+    <xsd:complexType name="agentDialExtendedResponse">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="pause" type="tns:pause" />
+    <xsd:complexType name="pause">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="agentId" nillable="true" type="xsd:string" />
+            <xsd:element name="pauseCode" type="xsd:int" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="pauseResponse" type="tns:pauseResponse" />
+    <xsd:complexType name="pauseResponse">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="agentDial" type="tns:agentDial" />
+    <xsd:complexType name="agentDial">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="agentId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="destNumber" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="agentDialResponse" type="tns:agentDialResponse" />
+    <xsd:complexType name="agentDialResponse">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="callCenterServiceException" nillable="true" type="tns:callCenterServiceException" />
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="logoffResponse">
+    <wsdl:part element="tns:logoffResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="agentDial">
+    <wsdl:part element="tns:agentDial" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CallCenterServiceException">
+    <wsdl:part element="tns:callCenterServiceException" name="CallCenterServiceException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="agentDialResponse">
+    <wsdl:part element="tns:agentDialResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="agentDialExtended">
+    <wsdl:part element="tns:agentDialExtended" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="unpause">
+    <wsdl:part element="tns:unpause" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="loginResponse">
+    <wsdl:part element="tns:loginResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="login">
+    <wsdl:part element="tns:login" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="pauseResponse">
+    <wsdl:part element="tns:pauseResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="logoff">
+    <wsdl:part element="tns:logoff" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="pause">
+    <wsdl:part element="tns:pause" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="unpauseResponse">
+    <wsdl:part element="tns:unpauseResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="agentDialExtendedResponse">
+    <wsdl:part element="tns:agentDialExtendedResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="CallCenterService">
+    <wsdl:operation name="unpause">
+      <wsdl:input message="tns:unpause" name="unpause">
+    </wsdl:input>
+      <wsdl:output message="tns:unpauseResponse" name="unpauseResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:CallCenterServiceException" name="CallCenterServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="login">
+      <wsdl:input message="tns:login" name="login">
+    </wsdl:input>
+      <wsdl:output message="tns:loginResponse" name="loginResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:CallCenterServiceException" name="CallCenterServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="logoff">
+      <wsdl:input message="tns:logoff" name="logoff">
+    </wsdl:input>
+      <wsdl:output message="tns:logoffResponse" name="logoffResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:CallCenterServiceException" name="CallCenterServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="agentDialExtended">
+      <wsdl:input message="tns:agentDialExtended" name="agentDialExtended">
+    </wsdl:input>
+      <wsdl:output message="tns:agentDialExtendedResponse" name="agentDialExtendedResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:CallCenterServiceException" name="CallCenterServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="pause">
+      <wsdl:input message="tns:pause" name="pause">
+    </wsdl:input>
+      <wsdl:output message="tns:pauseResponse" name="pauseResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:CallCenterServiceException" name="CallCenterServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="agentDial">
+      <wsdl:input message="tns:agentDial" name="agentDial">
+    </wsdl:input>
+      <wsdl:output message="tns:agentDialResponse" name="agentDialResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:CallCenterServiceException" name="CallCenterServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CallCenterServiceSoapBinding" type="tns:CallCenterService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="unpause">
+      <soap:operation soapAction="pause" style="document" />
+      <wsdl:input name="unpause">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="unpauseResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="CallCenterServiceException">
+        <soap:fault name="CallCenterServiceException" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="login">
+      <soap:operation soapAction="login" style="document" />
+      <wsdl:input name="login">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="loginResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="CallCenterServiceException">
+        <soap:fault name="CallCenterServiceException" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="logoff">
+      <soap:operation soapAction="logoff" style="document" />
+      <wsdl:input name="logoff">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="logoffResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="CallCenterServiceException">
+        <soap:fault name="CallCenterServiceException" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="agentDialExtended">
+      <soap:operation soapAction="agentDial" style="document" />
+      <wsdl:input name="agentDialExtended">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="agentDialExtendedResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="CallCenterServiceException">
+        <soap:fault name="CallCenterServiceException" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="pause">
+      <soap:operation soapAction="pause" style="document" />
+      <wsdl:input name="pause">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="pauseResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="CallCenterServiceException">
+        <soap:fault name="CallCenterServiceException" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="agentDial">
+      <soap:operation soapAction="agentDial" style="document" />
+      <wsdl:input name="agentDial">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="agentDialResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="CallCenterServiceException">
+        <soap:fault name="CallCenterServiceException" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CallCenterService">
+    <wsdl:port binding="tns:CallCenterServiceSoapBinding" name="CallCenterServicePort">
+      <soap:address location="http://localhost/freepbx/callcenter/CallCenterService.php" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,118 @@
+#!/bin/bash
+# hotdesking - Startup script for hotdesking
+
+# chkconfig: 35 85 15
+# description: hotdesking
+# processname: hotdesking
+
+# Copyright (C) 2013 Telecats, certain elements licensed under a Contributor Agreement.  
+# Contributors retain copyright to elements licensed under a Contributor Agreement.
+# Licensed to the User under the LGPL license.
+
+. /etc/rc.d/init.d/functions || exit 1
+. @SIPX_LIBEXECDIR@/sipx-utils.sh || exit 1
+
+prog=hotdesking
+pidfile="@SIPX_RUNDIR@/hotdesking.pid"
+
+[ -e @SIPX_CONFDIR@/sysconfig/$prog ] && . @SIPX_CONFDIR@/sysconfig/$prog
+
+checkRunningInstance() {
+  if [ -f "${pidfile}" ]; then
+    pid=`cat ${pidfile}`
+    if checkpid $pid 2>&1; then
+      echo "Process $prog is already running with pid $pid"
+      exit 1
+    fi
+  fi
+}
+
+start() {
+    checkRunningInstance
+
+    JavaCmd=`@SIPX_BINDIR@/sipx-config --java`
+    Dependencies=`@SIPX_BINDIR@/java-dep -d @SIPX_JAVADIR@/sipXcommons @sipxhotdesking_PKGS@`
+    export CLASSPATH=`echo @SIPX_CONFDIR@/sipxhotdesking @SIPX_JAVADIR@/hotdesking/*.jar ${Dependencies} | sed -e 's/ /:/g'`
+
+    setJavaSslOpts
+
+    # procname is there so cfengine can find it
+    Command="$JavaCmd \
+      -Dprocname=hotdesking \
+      -Dconf.dir=@SIPX_CONFDIR@ \
+      -Dvar.dir=@SIPX_VARDIR@ \
+      -Dlog.dir=@SIPX_LOGDIR@ \
+      -Dtmp.dir=@SIPX_TMPDIR@ \
+      $JavaSslOpts \
+      ${HOTDESKING_OPTS} \
+      org.sipfoundry.hotdesking.HotdeskingServer \
+      ${@}"
+    if [ -n "${NoFork}" ] ; then
+      runuser -s /bin/bash @SIPXPBXUSER@ -c "${Command}"
+    else
+      echo -n $"Starting $prog: "
+      runuser -s /bin/bash @SIPXPBXUSER@ -c "${Command}" >/dev/null 2>&1 &
+      echo $! > ${pidfile}
+      echo_success
+    fi
+}
+
+stop() {
+  echo -n $"Stopping hotdesking: "
+  killproc -p "${pidfile}" "hotdesking"
+  Status=$?
+  echo
+  [ $Status -eq 0 ] && rm -f "${pidfile}"
+}
+
+restart() {
+  stop
+  start
+}
+
+configtest() {
+  sipx_config_exists @SIPX_CONFDIR@/hotdesking.properties 
+  Status=$(($Status+$?))
+
+  # check validity of xml files
+##  @bindir@/sipx-validate-xml @SIPX_CONFDIR@/autoattendants.xml
+##  Status=$(($Status+$?))
+
+  # Check that the log file is writable.
+  logfile="@SIPX_LOGDIR@/hotdesking.log"
+  if [ -e $logfile -a ! -w $logfile ]
+  then
+      echo "Log file '$logfile' exists but is not writable." >&2
+      Status=1
+  fi
+}
+
+case "$1" in
+  nofork)
+    NoFork=1
+    start
+    ;;
+  start)
+    start ${@}
+    ;;
+  stop)
+    stop
+    ;;
+  restart|reload|force-reload)
+    restart
+    ;;
+  condrestart)
+    [ -f ${pidfile} ] && restart || :
+    ;;
+  status)
+    status -p ${pidfile} hotdesking
+    ;;
+  configtest)
+    configtest
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart|nofork}"
+    Status=1
+esac
+
+exit $Status

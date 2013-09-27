@@ -1,0 +1,115 @@
+# Copyright (c) 2013 Telecats, Inc. All rights reserved.
+# Contributed to SIPfoundry under a Contributor Agreement
+
+# This software is free software; you can redistribute it and/or modify it under
+# the terms of the Affero General Public License (AGPL) as published by the
+# Free Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This software is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+# details.
+
+#
+# hotdesking configuration and process management
+#
+
+bundle agent hotdesking {
+  methods:
+    hotdesking::
+      "any" usebundle => "hotdesking_config";
+    any::
+      "any" usebundle => "hotdesking_running"; #Is this ok? #It must sync with the sipXregistry server
+}
+
+bundle agent hotdesking_config {
+  files:
+    any::
+      "$(sipx.SIPX_CONFDIR)/hotdesking.properties"
+        comment => "install hotdesking config $(this.promiser)",
+        create => "true",
+        perms => m("644"),
+        edit_line => hotdesking_properties_contents,
+        classes => if_repaired("restart_hotdesking");
+    any::
+      "$(sipx.SIPX_CONFDIR)/sipXproxy-config"
+        comment => "install hotdesking authplugin config $(this.promiser)",
+        create => "true",
+        perms => m("644"),
+        edit_line => hotdesking_authplugin_properties_contents,
+        classes => if_repaired("restart_sipxproxy");
+    !primary::
+      "$(sipx.SIPX_CONFDIR)/hotdesking.properties"
+        comment => "copy hotdesking config",
+        create => "true",
+        perms => mog("644","$(sipx.SIPXPBXUSER)","$(sipx.SIPXPBXGROUP)"),
+        copy_from => copy_properties("$(sipx.master_address)","$(sipx.SIPX_CONFDIR)/hotdesking.properties");
+}
+
+bundle edit_line hotdesking_properties_contents {
+  insert_lines:
+    any::
+      "$(sipx.SIPX_CFDATA)/$(sipx.location_id)/hotdesking.properties.part"
+        insert_type => "file";
+        "hotdesking.sipxchangeDomainName=$(sipx.domain)";
+        "hotdesking.docDirectory=$(sipx.wwwdir)/doc";
+        "hotdesking.realm=$(sipx.realm)";
+	"log.file=$(sipx.SIPX_LOGDIR)/sipxhotdesking.log";
+	"SHARED_SECRET=$(sipx.secret)";
+  delete_lines:
+    any::
+      ".*";
+}
+
+bundle edit_line hotdesking_authplugin_properties_contents {
+  insert_lines:
+    any::
+      "$(sipx.SIPX_CFDATA)/$(sipx.location_id)/sipXproxy-config.part"
+        insert_type => "file",
+        expand_scalars => "true";
+        "SIPX_PROXY_HOOK_LIBRARY.203_hotdesking : $(sipx.SIPX_LIBDIR)/authplugins/libHotdesking.so";
+        "SIPX_PROXY.203_hotdesking.ENABLE_HD_AUTH : 1";
+  delete_lines:
+    any::
+      ".*"; 
+}
+
+bundle agent hotdesking_running {
+  vars:
+    any::
+      "service_command" string => ".*\s-Dprocname=hotdesking\s.*";
+
+  methods:
+    any::
+      "any" usebundle => find_sipxservice_by_command_regex("$(service_command)","hotdesking_running");
+    !src.hotdesking::
+      "any" usebundle => rh_chkconfig_status("hotdesking on");
+    !src.!hotdesking::
+      "any" usebundle => rh_chkconfig_status("hotdesking off");
+
+  commands:
+    (!hotdesking|stop_sipxecs).hotdesking_running::
+      "$(sipx.SIPX_SERVICEDIR)/hotdesking"
+        comment => "stop hotdesking",
+        args => "stop";
+
+    hotdesking.!hotdesking_running.!stop_sipxecs::
+      "$(sipx.SIPX_SERVICEDIR)/hotdesking"
+        comment => "start hotdesking",
+        args => "start";
+
+    hotdesking.hotdesking_running.(restart_sipxecs|restart_hotdesking)::
+      "$(sipx.SIPX_SERVICEDIR)/hotdesking"
+        comment => "restart hotdesking",
+        args => "restart";
+}
+
+
+body copy_from copy_properties(server,file) {
+  servers => { "$(server)" };
+  source => "$(file)";
+  compare => "digest";
+  trustkey => "true";
+  purge => "true";
+}

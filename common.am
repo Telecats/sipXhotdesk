@@ -1,0 +1,71 @@
+sipxhotdesking_PKGS = \
+        sipxcommons \
+        junit \
+        log4j \
+        dom4j \
+        commons-io \
+        jaxen \
+        commons-codec \
+        commons-logging \
+        commons-httpclient \
+        xmlrpc-common \
+	org.springframework.beans \
+	org.springframework.web \
+	org.springframework.context \
+	org.springframework.context.support \
+	org.springframework.core \
+	org.springframework.jdbc \
+	org.springframework.transaction \
+	org.springframework.expression \
+	org.springframework.aop \
+	org.springframework.asm \
+	spring-data-commons-core \
+	spring-data-mongodb \
+	mongo \
+	cglib-nodep
+
+cfg_PKGS = \
+        sipxcommons \
+        sipxconfig-neoconf \
+        sipxconfig-web \
+        commons-io \
+        commons-lang \
+        tapestry-annotations \
+        tapestry-framework \
+        hivemind \
+        velocity \
+        commons-lang \
+        commons-logging \
+        commons-io \
+        dom4j \
+        commons-beanutils-core \
+        org.springframework.beans \
+        org.springframework.core \
+        org.springframework.context \
+        org.springframework.transaction \
+        org.springframework.orm \
+        org.springframework.jdbc \
+        org.springframework.asm \
+        org.springframework.expression \
+        xercesImpl \
+        log4j
+
+hotdeskingtrigger_PKGS = \
+	sipxcommons \
+	axis \
+	org.springframework.beans \
+        org.springframework.core \
+        org.springframework.context \
+        org.springframework.transaction \
+        org.springframework.orm \
+        org.springframework.jdbc \
+        org.springframework.asm \
+        org.springframework.expression \
+	log4j \
+	commons-lang \
+        commons-logging \
+        commons-io \
+	org.restlet \
+	mongo \
+	spring-data-mongodb
+

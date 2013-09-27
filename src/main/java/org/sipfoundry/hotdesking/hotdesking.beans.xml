@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+  	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  	http://www.springframework.org/schema/task
+  	http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+  <!--  Load the properties from some files  -->
+  <bean id="hotdeskingProps" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>file:${conf.dir}/hotdesking.properties</value>
+        <value>file:${conf.dir}/domain-config</value>
+      </list>
+    </property>
+    <property name="searchSystemEnvironment" value="true" />
+    <property name="ignoreUnresolvablePlaceholders" value="true" />
+  </bean>
+  
+  <!--  Apply the configuration on a singleton (default scope) bean  -->
+  <bean id="hotdeskingConfig" class="org.sipfoundry.hotdesking.HotdeskingConfiguration">
+    <property name="logLevel" value="${log.level}" />
+    <property name="logFile" value="${log.file}" />
+    <property name="eventSocketPort" value="${freeswitch.eventSocketPort}" />
+    <property name="dataDirectory" value="${hotdesking.dataDirectory}" />
+    <property name="promptsDirectory" value="${hotdesking.promptsDirectory}" />
+    <property name="docDirectory" value="${hotdesking.docDirectory}" />
+    <property name="sipxchangeDomainName" value="${hotdesking.sipxchangeDomainName}" />
+    <property name="realm" value="${hotdesking.realm}" />
+    <property name="logoffUser" value="${hotdesking.logoffUser}" />
+    <property name="enableRelogging" value="${hotdesking.enableRelogging}" />
+    <property name="enablePromptLogoffOtherPhones" value="${hotdesking.enablePromptLogoffOtherPhones}" />
+    <property name="enableAutoLogoffOtherPhones" value="${hotdesking.enableAutoLogoffOtherPhones}" />
+    <property name="enableConfirmation" value="${hotdesking.enableConfirmation}" />
+    <property name="enableWelcomeSkipping" value="${hotdesking.enableWelcomeSkipping}" />
+	<property name="enablePincodeSkipping" value="${hotdesking.enablePincodeSkipping}" />
+    <property name="defaultPincodeIfSkipping" value="${hotdesking.defaultPincodeIfSkippingPincode}" />
+<!--     <property name="userPhonesRestUrl" value="${hotdesking.userPhonesRestUrl}" />
+    <property name="supervisorHostRpcPort" value="${hotdesking.supervisorHostRpcPort}" />
+    <property name="supervisorHost" value="${hotdesking.supervisorHost}" /> -->
+    <property name="autoLogoffTime" value="${hotdesking.auto_logoff_time}" />
+  </bean>
+
+  <!--  Init the hotdesking server when retrieved from it's main method (project starting point) -->
+  <bean id="hotdeskingServer" class="org.sipfoundry.hotdesking.HotdeskingServer" init-method="init" >
+    <lookup-method bean="hotdeskingHandler" name="getHotdeskingHandler"/>
+    <property name="eventSocketPort" value="${freeswitch.eventSocketPort}" />
+    <property name="logLevel" value="${log.level}" />
+    <property name="logFile" value="${log.file}" />
+  </bean>
+
+  <!--  Handle incoming calls, start a new thread for it. Instantiates Hotdesking class that will handle the call  -->
+  <bean id="hotdeskingHandler" class="org.sipfoundry.hotdesking.HotdeskingHandler" scope="prototype">
+    <property name="fsEventSocket" ref="fsEventSocket"/>
+    <property name="hotdeskingConfig" ref="hotdeskingConfig"/>
+    <property name="hotdeskingPermissionManager" ref="hotdeskingPermissionManager"/>
+    <property name="hotdeskingPhoneManager" ref="hotdeskingPhoneManager"/>
+  </bean>
+  
+    <!--  This presents a new Freeswitch event socket every time-->
+  <bean id="fsEventSocket" class="org.sipfoundry.commons.freeswitch.FreeSwitchEventSocket" scope="prototype">
+    <constructor-arg><ref bean="hotdeskingConfig"/></constructor-arg>
+  </bean>
+
+  <!--  This manages all the database things for the users -->
+  <bean id="hotdeskingPermissionManager" class="org.sipfoundry.hotdesking.mongo.HotdeskingPermissionManager">
+  	<property name="hotdeskingPermissionName" value="${permission.hotdesking}" />
+  	<property name="hotdeskingWithoutPincodePermissionName" value="${permission.hotdesking_without_pincode}" />
+  	<property name="hotdeskingAutoLogoffPermissionName" value="${permission.hotdesking_auto_logoff}" />
+  	<property name="imdbSpringTemplate" ref="imdb" />
+  	<property name="validUsers" ref="validUsers" />
+  </bean>
+  
+  <!--  This manages all the database things for the phones -->
+  <bean id="hotdeskingPhoneManager" class="org.sipfoundry.hotdesking.mongo.HotdeskingPhoneManager">
+  	<property name="registrarSpringTemplate" ref="registrar" />
+  </bean>
+  
+  <bean id="cronTask" class="org.sipfoundry.hotdesking.AutoLogoff">
+  	<!-- <property name="hotdeskingConfig" ref="hotdeskingConfig" /> -->
+  	<property name="hotdeskingPermissionManager" ref="hotdeskingPermissionManager" />
+  	<property name="hotdeskingPhoneManager" ref="hotdeskingPhoneManager" />
+  	<property name="logoffUser" value="${hotdesking.logoffUser}" />
+  </bean>
+  
+  <!-- Use the properties to schedule a task -->
+  <task:scheduled-tasks scheduler="taskScheduler">
+  	<task:scheduled ref="cronTask" method="logoff" cron="#{hotdeskingConfig.logoffCron}" />
+  </task:scheduled-tasks>
+  
+  <!-- Defines a ThreadPoolTaskScheduler instance with configurable pool size. -->
+ <task:scheduler id="taskScheduler" pool-size="1"/>      
+
+</beans>

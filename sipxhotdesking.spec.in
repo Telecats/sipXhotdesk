@@ -1,0 +1,81 @@
+Name: @PACKAGE@
+Version: @VERSION@
+Release: @PACKAGE_REVISION@
+
+Summary: Authorization Code/DISA/Account using FreeSwitch for sipX
+License: LGPL
+Group: Productivity/Telephony/SIP/Servers
+Vendor: SIPfoundry
+Packager: SIPfoundry <sipx-dev@sipfoundry.org>
+Url: http://www.sipfoundry.org
+
+BuildRequires: ant-commons-logging
+BuildRequires: ant-junit
+BuildRequires: ant-nodeps
+BuildRequires: automake
+BuildRequires: java-devel >= 1.6
+BuildRequires: zip
+BuildRequires: sipxcommons >= %version
+BuildRequires: sipxconfig >= %version
+BuildRequires: sipxproxy-devel >= %version
+BuildRequires: sipxrest >= %version
+
+Source: %name-%version.tar.gz
+
+Requires: sipxcommserverlib >= %version
+Requires: sipxcommons >= %version
+Requires: sipxrest >= %version
+
+
+%if %{?use_ibm_jvm}0
+Requires: java-ibm >= 1.6
+Requires: java-ibm-unrestricted
+%else
+Requires: java >= 1.6
+%endif
+
+Prefix: %_prefix
+BuildRoot: %{_tmppath}/%name-%version-root
+
+%description
+Authorization Code/DISA/Account Code subsystem that uses FreeSWITCH as a media server.
+
+%prep
+%setup -q
+
+%build
+%configure @SIPX_RPM_CONFIGURE_OPTIONS@
+cp config.log %name.configlog
+make all
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/%{_localstatedir}/sipxdata/tmp/hotdesking
+make DESTDIR=$RPM_BUILD_ROOT install
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(644,sipx,sipx,755)
+#config
+%attr(755,root,root) %{_sysconfdir}/init.d/hotdesking
+%{_datadir}/sipxecs/cfinputs/plugin.d/hotdesking.cf
+%attr(644,root,root) %{_sysconfdir}/sipxpbx/sipxhotdesking/sipxhotdesking.xml
+%attr(644,root,root) %{_sysconfdir}/sipxpbx/sipxhotdesking/sipxhotdesking.properties
+
+#implementation
+%{_datadir}/java/sipXecs/sipXconfig/plugins/sipXhotdesking.jar
+%{_datadir}/java/sipXecs/hotdesking/hotdesking.jar
+%{_libdir}/authplugins/libHotdesking.*
+
+#prompts
+%dir %attr(755,root,sipx) %{_datadir}/www/doc/stdprompts_en/hotdesking
+%{_datadir}/www/doc/stdprompts_en/hotdesking/*
+
+#Tmp dir
+%{_localstatedir}/sipxdata/tmp/hotdesking
+
+#Rest plugin
+%{_datadir}/java/sipXecs/sipXrest/plugins/hotdeskingtrigger.jar
+%{_datadir}/java/sipXecs/sipXrest/plugins/callcenter-interface.jar
