@@ -1,0 +1,94 @@
+diff --git a/sipXrest/src/org/sipfoundry/sipxrest/RestServer.java b/sipXrest/src/org/sipfoundry/sipxrest/RestServer.java
+index 9f6005e..c84197b 100644
+--- a/sipXrest/src/org/sipfoundry/sipxrest/RestServer.java
++++ b/sipXrest/src/org/sipfoundry/sipxrest/RestServer.java
+@@ -34,6 +34,8 @@ public class RestServer {
+     static final String PACKAGE = "org.sipfoundry.sipxrest";
+ 
+     private static String configFileName = "/etc/sipxpbx/sipxrest-config.xml";
++    
++    private static String domainConfigFileName = "/etc/sipxpbx/domain-config";
+ 
+     private static Appender appender;
+ 
+@@ -134,11 +136,17 @@ public class RestServer {
+ 
+         String configDir = System.getProperties().getProperty("conf.dir",  "/etc/sipxpbx");
+         configFileName = configDir + "/sipxrest-config.xml";
++        domainConfigFileName = configDir + "/domain-config";
+ 
+         if (!new File(configFileName).exists()) {
+             System.err.println("Cannot find the config file");
+             System.exit(-1);
+         }
++        
++        if (!new File(domainConfigFileName).exists()) {
++            System.err.println("Cannot find the domain-config file");
++            System.exit(-1);
++        }
+ 
+         restServerConfig = new RestServerConfigFileParser().parse("file://"
+                 + configFileName);
+@@ -148,6 +156,8 @@ public class RestServer {
+                 RestServer.getRestServerConfig().getLogDirectory()
+                 +"/sipxrest.log"));
+         Logger.getLogger(PACKAGE).addAppender(getAppender());
++        
++        new DomainConfiguration(domainConfigFileName);
+ 
+         accountManager = new AccountManagerImpl();
+         sipStackBean = new SipStackBean();
+
+diff --git a/sipXrest/bin/sipxrest.in b/sipXrest/bin/sipxrest.in
+index fbf9054..8b863f7 100755
+--- a/sipXrest/bin/sipxrest.in
++++ b/sipXrest/bin/sipxrest.in
+@@ -38,8 +38,9 @@ start() {
+   Command="$JavaCmd \
+       -Dprocname=sipxrest \
+       -Dconf.dir=@SIPX_CONFDIR@	\
++      -Dtmp.dir=@SIPX_TMPDIR@	\
+       -Dplugin.dir=@SIPX_JAVADIR@/sipXrest/plugins \
+-	  -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
++      -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
+       -Dsipxrest.command=start \
+       org.sipfoundry.sipxrest.RestServer \
+ 	 $Args"
+@@ -98,4 +99,4 @@ case "$1" in
+     Status=1
+ esac
+ 
+-exit $Status
+\ No newline at end of file
++exit $Status
+diff --git a/sipXrest/common.am b/sipXrest/common.am
+index 8b540f6..2b84667 100644
+--- a/sipXrest/common.am
++++ b/sipXrest/common.am
+@@ -7,6 +7,7 @@ rest_PKGS = \
+ 	commons-digester \
+ 	commons-io \
+ 	commons-logging \
++	commons-lang \
+ 	dnsjava \
+ 	jain-sip-sdp \
+ 	javax.servlet \
+@@ -18,4 +19,17 @@ rest_PKGS = \
+ 	ws-commons-util \
+ 	xmlrpc-client \
+ 	postgresql \
+-	xmlrpc-server
++	xmlrpc-server \
++	org.springframework.beans \
++        org.springframework.web \
++        org.springframework.context \
++        org.springframework.context.support \
++        org.springframework.core \
++        org.springframework.jdbc \
++        org.springframework.transaction \
++        org.springframework.expression \
++        org.springframework.aop \
++        org.springframework.asm \
++        spring-data-commons-core \
++        spring-data-mongodb \
++	axis
