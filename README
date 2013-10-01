@@ -56,6 +56,7 @@ https://github.com/Telecats/sipXhotdeskingTc
 Requirements
 ------------
 - Correct building sipXecs 4.6, see: https://github.com/dhubler
+  (sipXhotdeskingTc depends on sipXrest)
 - sipXyealink depends on sipXhotdeskingTc, so first also add sipXhotdeskingTc. See: https://github.com/Telecats
 
 
@@ -66,11 +67,50 @@ git submodule add https://github.com/Telecats/sipXhotdeskingTc.git
 git submodule init
 git submodule update
 
-add 'sipXhotdeskingTc' to your build/modules-include file BEFORE $(sipx_config). sipXaastra in (sipx_config) needs 
+add 'sipXrest sipXhotdeskingTc' to your build/modules-include file BEFORE $(sipx_config). sipXaastra in (sipx_config) needs 
 
 For example:
-$(sipx_core) sipXhotdeskingTc sipXyealinkTc  $(sipx_config) 
+$(sipx_core) sipXrest sipXhotdeskingTc sipXyealinkTc  $(sipx_config) 
 
 start building...
 
 DONE
+
+
+Known issues:
+You might need to modify your config/revision-gen script
+
+git diff config/revision-gen
+diff --git a/config/revision-gen b/config/revision-gen
+index 0d062ca..dc578e4 100755
+--- a/config/revision-gen
++++ b/config/revision-gen
+@@ -13,6 +13,7 @@ if test -f ./tarball-revision; then
+     cat ./tarball-revision
+     exit
+ fi
++
+ case $1 in
+   -s )
+     shift
+@@ -23,16 +24,17 @@ case $1 in
+     parent_rev=${parent%.*}
+     ;;
+ esac
++
+ VERSION=$1
+-VER_REV=`git describe --abbrev=5 --match="v${VERSION}" HEAD`
++VER_REV=`git describe --abbrev=5  HEAD`
+ if [ "$?" != "0" ]; then
+     echo "Could not find tag v$VERSION" 1>&2
+     exit 1
+ fi
+-REV=`echo "${VER_REV}" | sed -e 's/^v[0-9.]\+-//g' -e 's/-g\?/./g'`
++
++REV=`echo "${VER_REV}" | sed -e 's/^[0-9.]\+-//g' -e 's/-/./g'`
+ if [ -n "$parent_rev" ]; then
+   echo $[ ${parent_rev} + ${REV%.*} ].${REV#*.}
+ else
+   echo $REV
+ fi
+-
