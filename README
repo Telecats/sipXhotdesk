@@ -1,1 +1,76 @@
-Initial commit
+################
+sipXhotdeskingTc
+################
+
+-------
+Content
+-------
+Introduction
+Features
+Source
+Requirements
+Usage
+
+
+------------
+Introduction
+------------
+By default it is hard to use sipXecs in an environment where flexible workspaces are used. Flexible workspaces where users just find a free desk and start working aren't rare these days. This is where hotdesking comes in. Hotdesking solves this problem by enabling a user to login on a phone, so it can use the phone on the desk in the flex workspace without limitations.
+
+Additionally the initial rollout will become easier. If a company get 100 new SipX phones, without the hotdesking extension every phone has to carefully be put on the exact right desk and be pre-configured. With the hotdesking feature enabled you can just put a phone on a desk and you are ready to go, just make sure the manager and the office manager get the right phone (probably one with extension pad (smile). In the morning every user will be able to connect themselves to their own phone by reading the instructions sent by e-mail.
+
+Rebooting phones might be a problem when a PC is connected to the phone AND will slows down the process of reconfiguring the phone. This is why we also added the possibility of hotprovisioning (no more rebooting phones) phones. This way sipXecs can provision your phone settings without rebooting it !
+
+Currently we have hotprovisioning working for yealink and aastra phones, but by introducing this hotprovisioning framework it become's very easy enabling hotprovisioning for your own phones. Of course your phone hardware should have some way of allowing you to provision it without rebooting. (HENCE, hardware is the bottleneck, just stick to phones allowing you to hotprovision them and throw away the old ones not supporting hotprovisioning (smile)).
+
+
+--------
+Features
+--------
+- IVR menu supporting hotdesk operations
+- hotprovisioning (provisioning without reboot). This is currently available for aastra and yealink phones. But more can be added using the provided framework. see: sipXaastraTc and sipXyealinkTc at:https://github.com/Telecats
+- provisioning using reboot provisioning (should work for "all" phones)
+- Allowed numbers - Allow calling pre-selected numbers on logged off phones, like for example emergency services: 911, 112
+ - Hotdesking extension is configurable.
+ - Prompts are configurable:
+ - welcome prompt
+ - enable login as different user prompt
+ - enable logoff other phones prompt
+ - enable confirmation prompt
+- Try auto login using default pincode
+- Automatically logoff 'other' phones
+- Configuration menu in sipXconfig (Features menu -> Hotdesking)
+- Auto Logoff time (only for users having 'auto logoff' permission
+- Hotdesking extension + extension to (re)login to will skip IVR if provided settings are correct
+- When IVR has only 1 option in menu it will be chosen automatically, in this situation we assume there is no need to ask input from user
+- Wav files are included in English
+
+
+------
+SOURCE
+------
+https://github.com/Telecats/sipXhotdeskingTc
+
+
+------------
+Requirements
+------------
+- Correct building sipXecs 4.6, see: https://github.com/dhubler
+- sipXyealink depends on sipXhotdeskingTc, so first also add sipXhotdeskingTc. See: https://github.com/Telecats
+
+
+-----
+Usage
+-----
+git submodule add https://github.com/Telecats/sipXhotdeskingTc.git
+git submodule init
+git submodule update
+
+add 'sipXhotdeskingTc' to your build/modules-include file BEFORE $(sipx_config). sipXaastra in (sipx_config) needs 
+
+For example:
+$(sipx_core) sipXhotdeskingTc sipXyealinkTc  $(sipx_config) 
+
+start building...
+
+DONE
