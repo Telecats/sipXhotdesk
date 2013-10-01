@@ -12,7 +12,7 @@ noinst_DATA = \
 #javac-test   tests do not compile     
 
 jardir = @SIPX_JAVADIR@/sipXconfig/plugins
-cfg_JAR = sipXhotdesking.jar
+cfg_JAR = sipXhotdeskingTc.jar
 jar_DATA = $(cfg_JAR)
 cfg_RESOURCES = \
 	$(shell cd $(srcdir); find plugin -type f) \
