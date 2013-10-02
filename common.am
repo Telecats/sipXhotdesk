@@ -19,7 +19,6 @@ sipxhotdesking_PKGS = \
 	org.springframework.expression \
 	org.springframework.aop \
 	org.springframework.asm \
-	spring-data-commons-core \
 	spring-data-mongodb \
 	mongo \
 	cglib-nodep

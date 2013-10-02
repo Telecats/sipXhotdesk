@@ -1,6 +1,6 @@
-################
-sipXhotdeskingTc
-################
+##############
+sipXhotdesking
+##############
 
 -------
 Content
@@ -49,28 +49,28 @@ Features
 ------
 SOURCE
 ------
-https://github.com/Telecats/sipXhotdeskingTc
+https://github.com/Telecats/sipXhotdesking
 
 
 ------------
 Requirements
 ------------
 - Correct building sipXecs 4.6, see: https://github.com/dhubler
-  (sipXhotdeskingTc depends on sipXrest)
-- sipXyealink depends on sipXhotdeskingTc, so first also add sipXhotdeskingTc. See: https://github.com/Telecats
+  (sipXhotdesking depends on sipXrest)
+- sipXhotdesking depends on sipXhotprovisioning, so first add/build sipXhotprovisioning
 
 
 -----
 Usage
 -----
-git submodule add https://github.com/Telecats/sipXhotdeskingTc.git
+git submodule add https://github.com/Telecats/sipXhotdesking.git
 git submodule init
 git submodule update
 
-add 'sipXrest sipXhotdeskingTc' to your build/modules-include file BEFORE $(sipx_config). sipXaastra in (sipx_config) needs 
+add 'sipXrest sipXhotdesking' to your build/modules-include file BEFORE $(sipx_config). sipXaastra in (sipx_config) needs 
 
 For example:
-$(sipx_core) sipXrest sipXhotdeskingTc sipXyealinkTc  $(sipx_config) 
+$(sipx_core) sipXrest sipXhotdesking sipXyealink  $(sipx_config) 
 
 start building...
 

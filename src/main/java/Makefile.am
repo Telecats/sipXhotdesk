@@ -9,7 +9,7 @@ EXTRA_DIST = \
 noinst_DATA = javac-sipxhotdesking
 
 jardir = @SIPX_JAVADIR@/hotdesking
-JAR_FILE = hotdeskingTc.jar
+JAR_FILE = hotdesking.jar
 jar_DATA = \
 	$(JAR_FILE)
 
