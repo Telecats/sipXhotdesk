@@ -58,7 +58,8 @@ Requirements
 - Correct building sipXecs 4.6, see: https://github.com/dhubler
   (sipXhotdesking depends on sipXrest)
 - sipXhotdesking depends on sipXhotprovisioning, so first add/build sipXhotprovisioning
-
+- (optional) you might like sipXyealink, (hot) provisioning for yealink + hotdesking for yealink
+- (optional) you might like sipXaastraPatch, (hot) provisioning for aastra + hotdesking for aastra
 
 -----
 Usage
@@ -70,7 +71,7 @@ git submodule update
 add 'sipXrest sipXhotdesking' to your build/modules-include file BEFORE $(sipx_config). sipXaastra in (sipx_config) needs 
 
 For example:
-$(sipx_core) sipXrest sipXhotdesking sipXyealink  $(sipx_config) 
+$(sipx_core) sipXrest sipXhotprovisioning sipXhotdesking sipXyealink  $(sipx_config) 
 
 start building...
 
