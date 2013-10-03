@@ -9,6 +9,7 @@ Introduction
 Features
 Source
 Requirements
+Note
 Usage
 
 
@@ -60,6 +61,14 @@ Requirements
 - sipXhotdesking depends on sipXhotprovisioning, so first add/build sipXhotprovisioning
 - (optional) you might like sipXyealink, (hot) provisioning for yealink + hotdesking for yealink
 - (optional) you might like sipXaastraPatch, (hot) provisioning for aastra + hotdesking for aastra
+
+----
+Note
+----
+You might also be interested in:
+- sipXhotprovisioning, provisioning without reboot framework (https://github.com/Telecats/sipXhotprovisioning)
+- sipXaastraPatch, hotprovisioning for sipXaastra (https://github.com/Telecats/sipXaastraPatch)
+- sipXyealink, provisioning + hotprovisioning for yealink (https://github.com/Telecats/sipXyealink)
 
 -----
 Usage
