@@ -24,6 +24,7 @@ sipxhotdesking_PKGS = \
 	cglib-nodep
 
 cfg_PKGS = \
+        plugins/sipXhotprovisioning \
         sipxcommons \
         sipxconfig-neoconf \
         sipxconfig-web \
