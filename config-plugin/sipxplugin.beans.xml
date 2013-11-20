@@ -65,16 +65,6 @@
     <property name="executorService" ref="restartExecutorService" />
   </bean>
   
-  <bean id="hotProvisioningManager" class="org.sipfoundry.provisioning.hot.ScheduledHotProvisioningManagerImpl">
-	<property name="deviceSource" ref="phoneSource" />
-	<property name="jobContext" ref="jobContext"/>
-	<property name="sleepInterval" value="5000"/>
-	<property name="executorService" ref="restartExecutorService"/>
-  </bean>
-
- 
-  
-
   
    <!-- <bean id="hotdeskingFreeswitchExtensionProviderImpl"
 		class="org.sipfoundry.provisioning.taskfile.HotdeskingFreeswitchExtensionProviderImpl">
