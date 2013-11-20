@@ -46,33 +46,25 @@ public class SipXHotdeskingConfig implements ConfigProvider, PostConfigListener 
 		if (!request.applies(SipXHotdesking.FEATURE, AdminContext.FEATURE)) {
 			return;
 		}
-		Set<Location> locations = request.locations(manager);
-		FeatureManager featureManager = manager.getFeatureManager();
-		Address adminApi = manager.getAddressManager().getSingleAddress(
-				AdminContext.HTTP_ADDRESS_AUTH);
+
 		SipXHotdeskingSettings settings = m_sipXHotdesking.getSettings();
+
+		FeatureManager featureManager = manager.getFeatureManager();
 		Domain domain = manager.getDomainManager().getDomain();
+
 		List<Location> registrarLocations = manager.getFeatureManager()
 				.getLocationsForEnabledFeature(Registrar.FEATURE);
+
 		for (Location location : registrarLocations) {
 			File dir = manager.getLocationDataDirectory(location);
-			boolean enabled = featureManager.isFeatureEnabled(SipXHotdesking.FEATURE,
-					location);
 
-			ConfigUtils.enableCfengineClass(dir, "hotdesking.cfdat", enabled,
+			ConfigUtils.enableCfengineClass(dir, "hotdesking.cfdat", true,
 					"hotdesking");
-			if (!enabled) {
-				continue;
-			}
+
 			File f = new File(dir, "hotdesking.properties.part");
 			Writer wtr = new FileWriter(f);
-			Set<String> registrarAddresses = new LinkedHashSet<String>();
-			registrarAddresses.add(location.getAddress());
-			for (Location registrarLocation : registrarLocations) {
-				registrarAddresses.add(registrarLocation.getAddress());
-			}
 			try {
-				write(wtr, settings, domain, location, StringUtils.join(registrarAddresses, ","), adminApi);
+				write(wtr, settings, domain);
 			} finally {
 				IOUtils.closeQuietly(wtr);
 			}
@@ -80,7 +72,7 @@ public class SipXHotdeskingConfig implements ConfigProvider, PostConfigListener 
 
 	}
 
-	void write(Writer wtr, SipXHotdeskingSettings settings, Domain domain, Location location, String registrarAddresses, Address adminApi) throws IOException {
+	void write(Writer wtr, SipXHotdeskingSettings settings, Domain domain) throws IOException {
 		KeyValueConfiguration config = KeyValueConfiguration
 				.equalsSeparated(wtr);
 		config.writeSettings(settings.getSettings());

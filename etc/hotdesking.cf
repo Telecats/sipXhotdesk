@@ -39,12 +39,6 @@ bundle agent hotdesking_config {
         perms => m("644"),
         edit_line => hotdesking_authplugin_properties_contents,
         classes => if_repaired("restart_sipxproxy");
-    !primary::
-      "$(sipx.SIPX_CONFDIR)/hotdesking.properties"
-        comment => "copy hotdesking config",
-        create => "true",
-        perms => mog("644","$(sipx.SIPXPBXUSER)","$(sipx.SIPXPBXGROUP)"),
-        copy_from => copy_properties("$(sipx.master_address)","$(sipx.SIPX_CONFDIR)/hotdesking.properties");
 }
 
 bundle edit_line hotdesking_properties_contents {
@@ -106,10 +100,3 @@ bundle agent hotdesking_running {
 }
 
 
-body copy_from copy_properties(server,file) {
-  servers => { "$(server)" };
-  source => "$(file)";
-  compare => "digest";
-  trustkey => "true";
-  purge => "true";
-}
