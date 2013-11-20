@@ -16,12 +16,14 @@ BuildRequires: automake
 BuildRequires: java-devel >= 1.6
 BuildRequires: zip
 BuildRequires: sipxcommons >= %version
+BuildRequires: sipxhotprovisioning >= %version
 BuildRequires: sipxconfig >= %version
 BuildRequires: sipxproxy-devel >= %version
 BuildRequires: sipxrest >= %version
 
 Source: %name-%version.tar.gz
 
+Requires: sipxhotprovisioning >= %version
 Requires: sipxcommserverlib >= %version
 Requires: sipxcommons >= %version
 Requires: sipxrest >= %version
