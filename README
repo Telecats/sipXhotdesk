@@ -56,7 +56,7 @@ https://github.com/Telecats/sipXhotdesking
 ------------
 Requirements
 ------------
-- Correct building sipXecs 4.6, see: https://github.com/dhubler
+- Correct building sipXecs 4.6, see: https://github.com/SIPfoundry/sipxecs
   (sipXhotdesking depends on sipXrest)
 - sipXhotdesking depends on sipXhotprovisioning, so first add/build sipXhotprovisioning
 - (optional) you might like sipXyealink, (hot) provisioning for yealink + hotdesking for yealink
