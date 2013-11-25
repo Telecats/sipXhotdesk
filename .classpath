@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+        <classpathentry kind="src" path="src/main/java"/>
+        <classpathentry kind="src" path="config-plugin/src"/>
+        <classpathentry kind="src" path="config-plugin/plugin"/>
+        <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+        <classpathentry combineaccessrules="false" kind="src" path="/sipXcommons"/>
+        <classpathentry combineaccessrules="false" kind="src" path="/sipXconfig-neoconf"/>
+        <classpathentry combineaccessrules="false" kind="src" path="/sipXconfig-web"/>
+        <classpathentry kind="var" path="SIPX_COMMONS"/>
+        <classpathentry kind="var" path="SIPX_CONFIG"/>
+        <classpathentry kind="var" path="SIPX_JAVADIR"/>
+        <classpathentry combineaccessrules="false" kind="src" path="/sipXhotprovisioning"/>
+        <classpathentry kind="output" path="bin.eclipse"/>
+</classpath>  
